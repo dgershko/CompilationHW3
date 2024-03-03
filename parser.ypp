@@ -1,0 +1,214 @@
+%{
+    #include <iostream>
+    #include "output.hpp"
+    #include "scope.hpp"
+
+    using namespace std;
+    using namespace output;
+    #define YYSTYPE int
+    ScopeManager scopeManager;
+    extern int yylineno;
+    extern char* yytext;
+    extern size_t yyleng;
+    int yylex();
+    void yyerror(const char* msg);
+    scopeManager.insert_function("print", "void", {"string"});
+    scopeManager.insert_function("printi", "void", {"int"});
+    scopeManager.insert_function("readi", "int", {"int"});
+%}
+
+%start prog
+%token INT BYTE B BOOL TRUE FALSE RETURN BREAK CONTINUE WHILE SC ID NUM STRING
+%nonassoc LBRACE RBRACE
+%right ASSIGN
+%left OR
+%left AND
+%left EQ NEQ
+%left GT GTE LT LTE
+%left ADD SUB
+%left MUL DIV
+%right NOT
+%left LPAREN RPAREN
+%nonassoc IF
+%nonassoc ELSE
+
+%%
+
+prog: stmts { printProductionRule(1); };
+
+stmts: stmt { printProductionRule(2); } | stmts stmt { printProductionRule(3); }; 
+
+stmt:
+    LBRACE startScope stmts RBRACE endScope |
+    type ID SC                              { 
+                                            std::string type = ((Ntype*)$1)->get();
+                                            std::string name = ((NIdentifier*)$2)->get();
+                                            delete $1;
+                                            delete $2;
+                                            if (not scopeManager.insert_symbol(name, type)){
+                                                errorDef(yylineno, name);
+                                                exit(1);
+                                            }
+                                            } |
+    type ID ASSIGN expr SC                  { 
+                                            std::string type = ((Ntype*)$1)->get();
+                                            std::string name = ((NIdentifier*)$2)->get();
+                                            std::string val_type = ((Nexpression*)$4)->getType();
+                                            delete $1;
+                                            delete $2;
+                                            delete $4;
+                                            // add casting
+                                            if (type != val_type){
+                                                errorMismatch(yylineno);
+                                                exit(1);
+                                            }
+                                            if (not scopeManager.insert_symbol(name, type)){
+                                                errorDef(yylineno, name);
+                                                exit(1);
+                                            }
+                                            } |
+    ID ASSIGN expr SC                       { 
+                                            std::string name = ((NIdentifier*)$1)->get();
+                                            std::string type = scopeManager.get_type(name);
+                                            std::string val_type = ((Nexpression*)$3)->getType();
+                                            delete $1;
+                                            delete $3;
+                                            // add casting
+                                            if (type != val_type){
+                                                errorMismatch(yylineno);
+                                                exit(1);
+                                            }
+                                            } |
+    call SC                                 { printProductionRule(8); } |
+    RETURN SC                               { printProductionRule(9); } |
+    IF LPAREN expr RPAREN stmt              { printProductionRule(10); } |
+    IF LPAREN expr RPAREN stmt ELSE stmt    { printProductionRule(11); } |
+    WHILE LPAREN expr RPAREN stmt           { printProductionRule(12); } |
+    BREAK SC                                { printProductionRule(13); } |
+    CONTINUE SC                             { printProductionRule(14); };
+
+startScope:
+    { scopeManager.add_scope(); };
+
+endScope:
+    { scopeManager.delete_scope(); };
+
+call: ID LPAREN expr RPAREN { 
+                            std::string name = ((NIdentifier*)$1)->get();
+                            std::arg_type = ((Nexpression*)$3)->getType();
+                            if (not scopeManager.is_function(name)){
+                                errorUndef(yylineno, name);
+                                exit(1);
+                            }
+                            if (not scopeManager.get_func(name).get_arg_type() == arg_type){
+                                errorPrototypeMismatch(yylineno, name, scopeManager.get_func(name).get_arg(), arg_type);
+                                exit(1);
+                            }
+                            };
+
+type: INT { printProductionRule(16); } | BYTE {printProductionRule(17); } | BOOL { printProductionRule(18); };
+
+/* relop: EQ | NEQ | GT | GTE | LT | LTE; */
+
+/* binop: ADD | SUB | MUL | DIV; */
+
+expr:
+    LPAREN expr RPAREN      { 
+        $$ = $2;
+     } |
+    expr ADD expr           {
+        string leftType = ((Nexpression*)$1)->getType();
+        string rightType = ((Nexpression*)$3)->getType();
+        delete $3;
+        delete $1;
+        if (!numType(leftType) || !numType(rightType)){
+            errorMismatch(yylineno);
+            exit(1);
+        }
+        string newType = dominant(rightType, leftType);
+        $$ = new Nexpression(newType);
+     } |
+    expr SUB expr           { 
+        string leftType = ((Nexpression*)$1)->getType();
+        string rightType = ((Nexpression*)$3)->getType();
+        delete $3;
+        delete $1;
+        if (!numType(leftType) || !numType(rightType)){
+            errorMismatch(yylineno);
+            exit(1);
+        }
+        string newType = dominant(rightType, leftType);
+        $$ = new Nexpression(newType);
+     } |
+    expr MUL expr           { 
+     string leftType = ((Nexpression*)$1)->getType();
+        string rightType = ((Nexpression*)$3)->getType();
+        delete $3;
+        delete $1;
+        if (!numType(leftType) || !numType(rightType)){
+            errorMismatch(yylineno);
+            exit(1);
+        }
+        string newType = dominant(rightType, leftType);
+        $$ = new Nexpression(newType);
+     } |
+    expr DIV expr           { 
+        string leftType = ((Nexpression*)$1)->getType();
+        string rightType = ((Nexpression*)$3)->getType();
+        delete $3;
+        delete $1;
+        if (!numType(leftType) || !numType(rightType)){
+            errorMismatch(yylineno);
+            exit(1);
+        }
+        string newType = dominant(rightType, leftType);
+        $$ = new Nexpression(newType);
+     } |
+    ID                      { 
+        string name = ((IDNode*)$1)->get();
+        delete $1;
+        if(!manager.isDeclared(name)  || !manager.isFunction(name)){
+            errorUndef(yylineno, id);
+            exit(1);
+        }
+        string type = manager.getType(id);
+        $$ = new Nexpression(type);
+     } |
+    call                    { 
+        string name = ((callNode*)$1)->get();
+        string type = manager.getType(name);
+        delete $1;
+        $$ = new Nexpression(type);
+     } |
+    NUM                     { 
+        delete $1;
+        $$ = new Nexpression("INT");
+     } |
+    NUM B                   { 
+        int val = ((Ninteger*)$1)->get();
+        
+     } |
+    STRING                  { printProductionRule(25); } |
+    TRUE                    { printProductionRule(26); } |
+    FALSE                   { printProductionRule(27); } |
+    NOT expr                { printProductionRule(28); } |
+    expr AND expr           { printProductionRule(29); } |
+    expr OR expr            { printProductionRule(30); } |
+    expr EQ expr            { printProductionRule(31); } |
+    expr NEQ expr           { printProductionRule(31); } |
+    expr GT expr            { printProductionRule(31); } |
+    expr GTE expr           { printProductionRule(31); } |
+    expr LT expr            { printProductionRule(31); } |
+    expr LTE expr           { printProductionRule(31); } |
+    LPAREN type RPAREN expr { printProductionRule(32); };
+
+%%
+
+void yyerror(const char* msg) {
+    errorSyn(yylineno);
+    exit(0);
+}
+
+int main() {
+    return yyparse();
+}
