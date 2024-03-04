@@ -17,12 +17,16 @@ public:
     const std::string& get_type() { return this->type; }
 };
 
-class FunctionSymbol : public Symbol {
+class Function {
+    std::string name;
     std::string arg_type;
+    std::string ret_type;
 public:
-    FunctionSymbol(const std::string& name, const std::string& type, const std::string& arg_type) : Symbol(name, type, -1), arg_type(arg_type) { }
-    ~FunctionSymbol() = default;
+    Function(const std::string& name, const std::string& ret_type, const std::string& arg_type) : name(name), ret_type(ret_type), arg_type(arg_type) { }
+    ~Function() = default;
 
     const std::string& get_arg_type() { return this->arg_type; }
+    const std::string& get_ret_type() { return this->ret_type; }
+    const std::string& get_name() { return this->name; }
 };
 #endif 

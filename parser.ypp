@@ -15,6 +15,7 @@
     scopeManager.insert_function("print", "void", {"string"});
     scopeManager.insert_function("printi", "void", {"int"});
     scopeManager.insert_function("readi", "int", {"int"});
+    int loop_counter = 0;
 %}
 
 %start prog
@@ -79,13 +80,42 @@ stmt:
                                                 exit(1);
                                             }
                                             } |
-    call SC                                 { printProductionRule(8); } |
+    call SC                                 { $$ = $1; } |
     RETURN SC                               { printProductionRule(9); } |
-    IF LPAREN expr RPAREN stmt              { printProductionRule(10); } |
+    IF LPAREN expr RPAREN stmt              { 
+                                            if ($3->getType() != "BOOL"){
+                                                errorMismatch(yylineno);
+                                                exit(1);
+                                            }
+                                            scopeManager.add_scope();
+                                            $$ = $5;
+                                            scopeManager.delete_scope();
+                                            } |
     IF LPAREN expr RPAREN stmt ELSE stmt    { printProductionRule(11); } |
-    WHILE LPAREN expr RPAREN stmt           { printProductionRule(12); } |
-    BREAK SC                                { printProductionRule(13); } |
-    CONTINUE SC                             { printProductionRule(14); };
+    WHILE LPAREN expr RPAREN stmt           { 
+                                            if ($3->getType() != "BOOL"){
+                                                errorMismatch(yylineno);
+                                                exit(1);
+                                            }
+                                            loop_counter++;
+                                            scopeManager.add_scope();
+                                            $$ = $5;
+                                            scopeManager.delete_scope();
+                                            } |
+    BREAK SC                                { 
+                                            if (loop_counter == 0){
+                                                errorUnexpectedBreak(yylineno);
+                                                exit(1);
+                                            }
+                                            loop_counter--;
+                                            } |
+    CONTINUE SC                             { 
+                                            if (loop_counter == 0){
+                                                errorUnexpectedContinue(yylineno);
+                                                exit(1);
+                                            }
+                                            loop_counter--;
+                                            };
 
 startScope:
     { scopeManager.add_scope(); };
@@ -95,7 +125,7 @@ endScope:
 
 call: ID LPAREN expr RPAREN { 
                             std::string name = ((NIdentifier*)$1)->get();
-                            std::arg_type = ((Nexpression*)$3)->getType();
+                            std::arg_type = ((Nexpression*)$3)->get_arg_type();
                             if (not scopeManager.is_function(name)){
                                 errorUndef(yylineno, name);
                                 exit(1);
@@ -106,7 +136,16 @@ call: ID LPAREN expr RPAREN {
                             }
                             };
 
-type: INT { printProductionRule(16); } | BYTE {printProductionRule(17); } | BOOL { printProductionRule(18); };
+type: 
+    INT { 
+    $$ = new NType("int"); 
+    } | 
+    BYTE { 
+    $$ = new Ntype("byte"); 
+    } | 
+    BOOL { 
+    $$ = new Ntype("bool"); 
+    };
 
 /* relop: EQ | NEQ | GT | GTE | LT | LTE; */
 
@@ -188,10 +227,16 @@ expr:
         int val = ((Ninteger*)$1)->get();
         
      } |
-    STRING                  { printProductionRule(25); } |
-    TRUE                    { printProductionRule(26); } |
-    FALSE                   { printProductionRule(27); } |
-    NOT expr                { printProductionRule(28); } |
+    STRING                  { $$ = new NExpression("string"); } |
+    TRUE                    { $$ = new NExpression("bool"); } |
+    FALSE                   { $$ = new NExpression("bool") } |
+    NOT expr                { 
+                            if ($2->getType() != "BOOL"){
+                                errorMismatch(yylineno);
+                                exit(1);
+                            }
+                            $$ = $2;   
+                            } |
     expr AND expr           { printProductionRule(29); } |
     expr OR expr            { printProductionRule(30); } |
     expr EQ expr            { printProductionRule(31); } |
