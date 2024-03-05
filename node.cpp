@@ -1,8 +1,18 @@
+#ifndef NODE_HPP
+#define NODE_HPP
+
 #include <iostream>
 #include <vector>
 #include <string>
 
 using std::string;
+
+// class NExpression;
+// class Ntype;
+// class Ninteger;
+// class NIdentifier;
+// class NifElse;
+// class NCall;
 
 typedef enum binop
 {
@@ -27,7 +37,7 @@ typedef enum numtype
     BOOL
 } NumType;
 
-typeDef NIdentifier callNode;
+// typedef NIdentifier callNode;
 class Node
 {
 public:
@@ -60,7 +70,31 @@ public:
         this->nextNode = nextNode;
     }
 };
+class NifElse : public Node
+{
+    NExpression *ifBranch;
+    NExpression *elseBranch;
 
+public:
+    ~NifElse() = default;
+    explicit NifElse() = default;
+    NExpression *getIf()
+    {
+        return this->ifBranch;
+    }
+    void setIf(NExpression *newIf)
+    {
+        this->ifBranch = newIf;
+    }
+    NExpression *getElse()
+    {
+        return this->elseBranch;
+    }
+    void setElse(NExpression *newElse)
+    {
+        this->elseBranch = newElse;
+    }
+};
 class Ntype : public Node
 {
     string type;
@@ -88,7 +122,8 @@ public:
         this->val = stoi(input);
     }
     ~Ninteger() = default;
-    int get(){
+    int get()
+    {
         return this->val;
     }
     void set(int newValue)
@@ -113,7 +148,9 @@ public:
         this->name = newName;
     }
 };
-
+class NStatement : public Node
+{
+};
 /*
 class NCast : public Node {
 public:
@@ -185,4 +222,5 @@ class NAssign : public Node
 //     NBlock() {}
 // };
 
-#define YYSTYPE Node *
+// #define YYSTYPE Node *
+#endif

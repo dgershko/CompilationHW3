@@ -1,7 +1,7 @@
 %{
 // #include"tokens.hpp"
 #include "parser.tab.hpp"
-#include "output.hpp"
+#include "hw3_output.hpp"
 %}
 %option yylineno
 %option noyywrap

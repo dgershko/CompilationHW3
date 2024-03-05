@@ -15,5 +15,5 @@ int main() {
     printf("%d\n", is_declared);
     is_declared = scopeManager.is_declared("readi");
     printf("%d\n", is_declared);
-    std::cout << scopeManager.get_function("readi")->get_retType() << std::endl;
+    std::cout << scopeManager.get_function("readi")->get_ret_type() << std::endl;
 }

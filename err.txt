@@ -1,0 +1,322 @@
+parser.ypp:78.5-43: warning: type clash on default action: <stmt> != <> [-Wother]
+   78 |     LBRACE startScope stmts RBRACE endScope |
+      |     ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+In file included from scanner.lex:3:
+parser.tab.hpp:57:5: error: expected identifier before ‘int’
+   57 |     int = 258,                     /* int  */
+      |     ^~~
+parser.tab.hpp:57:5: error: expected ‘}’ before ‘int’
+parser.tab.hpp:52:3: note: to match this ‘{’
+   52 |   {
+      |   ^
+parser.tab.hpp:57:9: error: expected unqualified-id before ‘=’ token
+   57 |     int = 258,                     /* int  */
+      |         ^
+parser.tab.hpp:91:3: error: expected declaration before ‘}’ token
+   91 |   };
+      |   ^
+parser.ypp:42:5: error: ‘NType’ does not name a type
+   42 |     NType* type;
+      |     ^~~~~
+parser.ypp:43:5: error: ‘NIdentifier’ does not name a type
+   43 |     NIdentifier* id;
+      |     ^~~~~~~~~~~
+parser.ypp:44:5: error: ‘NExpression’ does not name a type
+   44 |     NExpression* expr;
+      |     ^~~~~~~~~~~
+parser.ypp:45:5: error: ‘NInteger’ does not name a type
+   45 |     NInteger* integer;
+      |     ^~~~~~~~
+parser.ypp:46:5: error: ‘NCall’ does not name a type
+   46 |     NCall* call;
+      |     ^~~~~
+parser.ypp:47:5: error: ‘NStatement’ does not name a type
+   47 |     NStatement* stmt;
+      |     ^~~~~~~~~~
+scanner.lex: In function ‘int yylex()’:
+scanner.lex:19:8: error: ‘INT’ was not declared in this scope
+   19 | int                             return INT;
+      |        ^~~
+scanner.lex:20:8: error: ‘BYTE’ was not declared in this scope
+   20 | byte                           return BYTE;
+      |        ^~~~
+scanner.lex:21:8: error: ‘B’ was not declared in this scope
+   21 | b                                 return B;
+      |        ^
+scanner.lex:22:8: error: ‘BOOL’ was not declared in this scope
+   22 | bool                           return BOOL;
+      |        ^~~~
+scanner.lex:23:8: error: ‘AND’ was not declared in this scope
+   23 | and                             return AND;
+      |        ^~~
+scanner.lex:24:8: error: ‘OR’ was not declared in this scope
+   24 | or                               return OR;
+      |        ^~
+scanner.lex:25:8: error: ‘NOT’ was not declared in this scope
+   25 | not                             return NOT;
+      |        ^~~
+scanner.lex:26:8: error: ‘TRUE’ was not declared in this scope
+   26 | true                           return TRUE;
+      |        ^~~~
+scanner.lex:27:8: error: ‘FALSE’ was not declared in this scope
+   27 | false                         return FALSE;
+      |        ^~~~~
+scanner.lex:28:8: error: ‘RETURN’ was not declared in this scope
+   28 | return                       return RETURN;
+      |        ^~~~~~
+scanner.lex:29:8: error: ‘IF’ was not declared in this scope
+   29 | if                               return IF;
+      |        ^~
+scanner.lex:30:8: error: ‘ELSE’ was not declared in this scope; did you mean ‘EILSEQ’?
+   30 | else                           return ELSE;
+      |        ^~~~
+      |        EILSEQ
+scanner.lex:31:8: error: ‘WHILE’ was not declared in this scope
+   31 | while                         return WHILE;
+      |        ^~~~~
+scanner.lex:32:8: error: ‘BREAK’ was not declared in this scope
+   32 | break                         return BREAK;
+      |        ^~~~~
+scanner.lex:33:8: error: ‘CONTINUE’ was not declared in this scope; did you mean ‘WCONTINUED’?
+   33 | continue                   return CONTINUE;
+      |        ^~~~~~~~
+      |        WCONTINUED
+scanner.lex:34:8: error: ‘SC’ was not declared in this scope
+   34 | ;                                return SC;
+      |        ^~
+scanner.lex:35:8: error: ‘LPAREN’ was not declared in this scope
+   35 | \(                           return LPAREN;
+      |        ^~~~~~
+scanner.lex:36:8: error: ‘RPAREN’ was not declared in this scope
+   36 | \)                           return RPAREN;
+      |        ^~~~~~
+scanner.lex:37:8: error: ‘LBRACE’ was not declared in this scope
+   37 | "{"                          return LBRACE;
+      |        ^~~~~~
+scanner.lex:38:8: error: ‘RBRACE’ was not declared in this scope
+   38 | "}"                          return RBRACE;
+      |        ^~~~~~
+scanner.lex:39:8: error: ‘EQ’ was not declared in this scope
+   39 | "=="                             return EQ;
+      |        ^~
+scanner.lex:40:8: error: ‘NEQ’ was not declared in this scope
+   40 | "!="                            return NEQ;
+      |        ^~~
+scanner.lex:41:8: error: ‘GT’ was not declared in this scope
+   41 | ">"                              return GT;
+      |        ^~
+scanner.lex:42:8: error: ‘GTE’ was not declared in this scope
+   42 | ">="                            return GTE;
+      |        ^~~
+scanner.lex:43:8: error: ‘LT’ was not declared in this scope
+   43 | "<"                              return LT;
+      |        ^~
+scanner.lex:44:8: error: ‘LTE’ was not declared in this scope
+   44 | "<="                            return LTE;
+      |        ^~~
+scanner.lex:45:8: error: ‘ASSIGN’ was not declared in this scope
+   45 | "="                          return ASSIGN;
+      |        ^~~~~~
+scanner.lex:46:8: error: ‘ADD’ was not declared in this scope
+   46 | "+"                             return ADD;
+      |        ^~~
+scanner.lex:47:8: error: ‘SUB’ was not declared in this scope
+   47 | "-"                             return SUB;
+      |        ^~~
+scanner.lex:48:8: error: ‘MUL’ was not declared in this scope
+   48 | "*"                             return MUL;
+      |        ^~~
+scanner.lex:49:8: error: ‘DIV’ was not declared in this scope
+   49 | "/"                             return DIV;
+      |        ^~~
+scanner.lex:50:8: error: ‘NUM’ was not declared in this scope
+   50 | {num}                           return NUM;
+      |        ^~~
+scanner.lex:51:8: error: ‘ID’ was not declared in this scope
+   51 | {id}                             return ID;
+      |        ^~
+scanner.lex:52:8: error: ‘STRING’ was not declared in this scope
+   52 | {string}                     return STRING;
+      |        ^~~~~~
+parser.ypp:16:5: error: ‘scopeManager’ does not name a type; did you mean ‘ScopeManager’?
+   16 |     scopeManager.insert_function("print", "void", "string");
+      |     ^~~~~~~~~~~~
+      |     ScopeManager
+parser.ypp:17:5: error: ‘scopeManager’ does not name a type; did you mean ‘ScopeManager’?
+   17 |     scopeManager.insert_function("printi", "void", "int");
+      |     ^~~~~~~~~~~~
+      |     ScopeManager
+parser.ypp:18:5: error: ‘scopeManager’ does not name a type; did you mean ‘ScopeManager’?
+   18 |     scopeManager.insert_function("readi", "int", "int");
+      |     ^~~~~~~~~~~~
+      |     ScopeManager
+In file included from parser.tab.cpp:132:
+parser.tab.hpp:57:5: error: expected identifier before ‘int’
+   57 |     int = 258,                     /* int  */
+      |     ^~~
+parser.tab.hpp:57:5: error: expected ‘}’ before ‘int’
+parser.tab.hpp:52:3: note: to match this ‘{’
+   52 |   {
+      |   ^
+parser.tab.hpp:57:9: error: expected unqualified-id before ‘=’ token
+   57 |     int = 258,                     /* int  */
+      |         ^
+parser.tab.hpp:91:3: error: expected declaration before ‘}’ token
+   91 |   };
+      |   ^
+parser.ypp:42:5: error: ‘NType’ does not name a type; did you mean ‘Ntype’?
+   42 |     NType* type;
+      |     ^~~~~
+      |     Ntype
+parser.ypp:45:5: error: ‘NInteger’ does not name a type; did you mean ‘Ninteger’?
+   45 |     NInteger* integer;
+      |     ^~~~~~~~
+      |     Ninteger
+parser.ypp:46:5: error: ‘NCall’ does not name a type
+   46 |     NCall* call;
+      |     ^~~~~
+parser.ypp: In function ‘int yyparse()’:
+parser.ypp:73:15: error: ‘printProductionRule’ was not declared in this scope
+   73 | prog: stmts { printProductionRule(1); };
+      |               ^~~~~~~~~~~~~~~~~~~
+parser.ypp:75:15: error: ‘printProductionRule’ was not declared in this scope
+   75 | stmts: stmt { printProductionRule(2); } | stmts stmt { printProductionRule(3); };
+      |               ^~~~~~~~~~~~~~~~~~~
+parser.ypp:75:56: error: ‘printProductionRule’ was not declared in this scope
+   75 | stmts: stmt { printProductionRule(2); } | stmts stmt { printProductionRule(3); };
+      |                                                        ^~~~~~~~~~~~~~~~~~~
+parser.ypp:80:79: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘type’
+   80 |                                             string type = ((Ntype*)$1)->get();
+      |                                                                               ^   
+parser.ypp:82:63: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘type’
+   82 |                                             delete $1;
+      |                                                               ^   
+parser.ypp:90:79: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘type’
+   90 |                                             string type = ((Ntype*)$1)->get();
+      |                                                                               ^   
+parser.ypp:93:63: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘type’
+   93 |                                             delete $1;
+      |                                                               ^   
+parser.ypp:112:72: error: ‘class ScopeManager’ has no member named ‘get_type’
+  112 |                                             string type = scopeManager.get_type(name);
+      |                                                                        ^~~~~~~~
+parser.ypp:122:73: error: cannot convert ‘NExpression*’ to ‘NStatement*’ in assignment
+  122 |     call SC                                 { $$ = $1; } |
+      |                                                                         ^    
+      |                                                                         |
+      |                                                                         NExpression*
+parser.ypp:135:47: error: ‘printProductionRule’ was not declared in this scope
+  135 |     IF LPAREN expr RPAREN stmt ELSE stmt    { printProductionRule(11); } |
+      |                                               ^~~~~~~~~~~~~~~~~~~
+parser.ypp:170:81: error: ‘class NExpression’ has no member named ‘get_arg_type’
+  170 |                             string arg_type = ((NExpression*)$3)->get_arg_type();
+      |                                                                                 ^           
+parser.ypp:171:50: error: ‘class ScopeManager’ has no member named ‘is_function’; did you mean ‘has_function’?
+  171 |                             if (not scopeManager.is_function(name)){
+      |                                                  ^~~~~~~~~~~
+      |                                                  has_function
+parser.ypp:175:50: error: ‘class ScopeManager’ has no member named ‘get_func’; did you mean ‘get_function’?
+  175 |                             if (not scopeManager.get_func(name).get_arg_type() == arg_type){
+      |                                                  ^~~~~~~~
+      |                                                  get_function
+parser.ypp:176:85: error: ‘class ScopeManager’ has no member named ‘get_func’; did you mean ‘get_function’?
+  176 |                                 errorPrototypeMismatch(yylineno, name, scopeManager.get_func(name).get_arg(), arg_type);
+      |                                                                                     ^~~~~~~~
+      |                                                                                     get_function
+parser.ypp:179:73: error: ‘class ScopeManager’ has no member named ‘get_func’; did you mean ‘get_function’?
+  179 |                             $$ = new NExpression(scopeManager.get_func(name).get_ret_type());
+      |                                                                         ^~~~~~~~
+      |                                                                         get_function
+parser.ypp:184:12: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘type’
+  184 |     $$ = new Ntype("int");
+      |            ^~~~
+parser.ypp:187:12: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘type’
+  187 |     $$ = new Ntype("byte");
+      |            ^~~~
+parser.ypp:190:12: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘type’
+  190 |     $$ = new Ntype("bool");
+      |            ^~~~
+parser.ypp:206:34: error: ‘numType’ was not declared in this scope; did you mean ‘numtype’?
+  206 |                             if (!numType(leftType) || !numType(rightType)){
+      |                                  ^~~~~~~
+      |                                  numtype
+parser.ypp:218:34: error: ‘numType’ was not declared in this scope; did you mean ‘numtype’?
+  218 |                             if (!numType(leftType) || !numType(rightType)){
+      |                                  ^~~~~~~
+      |                                  numtype
+parser.ypp:230:34: error: ‘numType’ was not declared in this scope; did you mean ‘numtype’?
+  230 |                             if (!numType(leftType) || !numType(rightType)){
+      |                                  ^~~~~~~
+      |                                  numtype
+parser.ypp:242:34: error: ‘numType’ was not declared in this scope; did you mean ‘numtype’?
+  242 |                             if (!numType(leftType) || !numType(rightType)){
+      |                                  ^~~~~~~
+      |                                  numtype
+parser.ypp:250:45: error: ‘IDNode’ was not declared in this scope; did you mean ‘Node’?
+  250 |                             string name = ((IDNode*)$1)->get();
+      |                                             ^~~~~~
+      |                                             Node
+parser.ypp:250:52: error: expected primary-expression before ‘)’ token
+  250 |                             string name = ((IDNode*)$1)->get();
+      |                                                    ^
+parser.ypp:252:46: error: ‘class ScopeManager’ has no member named ‘isDeclared’; did you mean ‘is_declared’?
+  252 |                             if(!scopeManager.isDeclared(name)  || !scopeManager.isFunction(name)){
+      |                                              ^~~~~~~~~~
+      |                                              is_declared
+parser.ypp:252:81: error: ‘class ScopeManager’ has no member named ‘isFunction’
+  252 |                             if(!scopeManager.isDeclared(name)  || !scopeManager.isFunction(name)){
+      |                                                                                 ^~~~~~~~~~
+parser.ypp:253:54: error: ‘id’ was not declared in this scope; did you mean ‘void’?
+  253 |                                 errorUndef(yylineno, id);
+      |                                                      ^~
+      |                                                      void
+parser.ypp:256:56: error: ‘class ScopeManager’ has no member named ‘getType’
+  256 |                             string type = scopeManager.getType(id);
+      |                                                        ^~~~~~~
+parser.ypp:256:64: error: ‘id’ was not declared in this scope; did you mean ‘void’?
+  256 |                             string type = scopeManager.getType(id);
+      |                                                                ^~
+      |                                                                void
+parser.ypp:260:45: error: ‘NCall’ was not declared in this scope
+  260 |                             string name = ((NCall*)$1)->get();
+      |                                             ^~~~~
+parser.ypp:260:51: error: expected primary-expression before ‘)’ token
+  260 |                             string name = ((NCall*)$1)->get();
+      |                                                   ^
+parser.ypp:261:56: error: ‘class ScopeManager’ has no member named ‘getType’
+  261 |                             string type = scopeManager.getType(name);
+      |                                                        ^~~~~~~
+parser.ypp:266:46: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘integer’
+  266 |                             delete $1;
+      |                                              ^      
+parser.ypp:270:41: error: ‘NInteger’ was not declared in this scope; did you mean ‘Ninteger’?
+  270 |                             int val = ((NInteger*)$1)->get();
+      |                                         ^~~~~~~~
+      |                                         Ninteger
+parser.ypp:270:50: error: expected primary-expression before ‘)’ token
+  270 |                             int val = ((NInteger*)$1)->get();
+      |                                                  ^
+parser.ypp:270:62: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘integer’
+  270 |                             int val = ((NInteger*)$1)->get();
+      |                                                              ^      
+parser.ypp:271:47: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘integer’
+  271 |                             delete $1;
+      |                                               ^      
+parser.ypp:273:61: error: invalid initialization of reference of type ‘const std::string&’ {aka ‘const std::__cxx11::basic_string<char>&’} from expression of type ‘int’
+  273 |                                 errorByteTooLarge(yylineno, val);
+      |                                                             ^~~
+In file included from parser.ypp:3:
+hw3_output.hpp:23:54: note: in passing argument 2 of ‘void output::errorByteTooLarge(int, const std::string&)’
+   23 |     void errorByteTooLarge(int lineno, const string &value);
+      |                                        ~~~~~~~~~~~~~~^~~~~
+parser.ypp:280:69: error: expected ‘;’ before ‘}’ token
+  280 |     FALSE                   { $$ = new NExpression("bool") } |
+      |                                                                     ^ 
+      |                                                                     ;
+parser.ypp:378:63: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘type’
+  378 |                             string type = ((Ntype*)$2)->get();
+      |                                                               ^   
+parser.ypp:379:47: error: ‘YYSTYPE’ {aka ‘union yystype’} has no member named ‘type’
+  379 |                             delete $2;
+      |                                               ^   
+make: *** [Makefile:6: all] Error 1
