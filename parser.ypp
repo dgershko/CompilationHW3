@@ -2,28 +2,33 @@
     #include <iostream>
     #include "hw3_output.hpp"
     #include "scope.hpp"
-    #include "node.cpp"
+    #include "node.hpp"
     #include "Symbol.hpp"
-    // #define YYSTYPE Node*
+    #define YYSTYPE Node *
     using namespace std;
     using namespace output;
-    ScopeManager scopeManager;
     extern int yylineno;
     extern char* yytext;
     extern size_t yyleng;
     extern int yylex();
     void yyerror(const char* msg);
-    scopeManager.insert_function("print", "void", "string");
-    scopeManager.insert_function("printi", "void", "int");
-    scopeManager.insert_function("readi", "int", "int");
+    ScopeManager scopeManager;
+    void initialize_scope_manager() {
+        scopeManager.insert_function("print", "void", "string");
+        scopeManager.insert_function("printi", "void", "int");
+        scopeManager.insert_function("readi", "int", "int");
+        scopeManager.add_scope();
+    }
     int loop_counter = 0;
     bool is_numeric(string type){
+        // cout << "in is_numeric, type: " << type << endl;
         return type == "int" || type == "byte";
     }
     bool can_implicit_cast(string from, string to){
         return (from == "byte" && to == "int");
     }
     string dominant(string left, string right) { 
+        // std::cout << "in dominant, left: " << left << ", right: " << right << std::endl;
         if (left == "bool" && right == "bool") {
             return "bool";
         }
@@ -36,7 +41,7 @@
     }
 
 %}
-%union yystype{
+/* %union yystype{
     int num;
     char* str;
     NType* type;
@@ -45,10 +50,10 @@
     NInteger* integer;
     NCall* call;
     NStatement* stmt;
-}
+} */
 
 %start prog
-%token int byte B bool TRUE FALSE RETURN BREAK CONTINUE WHILE SC STRING ID NUM
+%token INT BYTE B BOOL TRUE FALSE RETURN BREAK CONTINUE WHILE SC STRING ID NUM
 %nonassoc LBRACE RBRACE
 %right ASSIGN
 %left OR
@@ -62,17 +67,17 @@
 %nonassoc IF
 %nonassoc ELSE
 
-%type <type> type
+/* %type <type> type
 %type <id> ID
 %type <integer> NUM
 %type <expr> expr
 %type <expr> call
-%type <stmt> stmt
+%type <stmt> stmt */
 %%
 
-prog: stmts { printProductionRule(1); };
+prog: stmts { /* placeholder */ };
 
-stmts: stmt { printProductionRule(2); } | stmts stmt { printProductionRule(3); }; 
+stmts: stmt { /* placeholder */ } | stmts stmt { /* placeholder */ }; 
 
 stmt:
     LBRACE startScope stmts RBRACE endScope |
@@ -109,7 +114,7 @@ stmt:
                                                 errorUndef(yylineno, name);
                                                 exit(1);
                                             }
-                                            string type = scopeManager.get_type(name);
+                                            string type = scopeManager.get_symbol(name)->get_type();
                                             string val_type = ((NExpression*)$3)->getType();
                                             delete $1;
                                             delete $3;
@@ -124,7 +129,7 @@ stmt:
                                             // does nothing?
                                             } |
     IF LPAREN expr RPAREN stmt              { 
-                                            if ($3->getType() != "bool"){
+                                            if (((NExpression*)$3)->getType() != "bool"){
                                                 errorMismatch(yylineno);
                                                 exit(1);
                                             }
@@ -132,9 +137,9 @@ stmt:
                                             $$ = $5;
                                             scopeManager.delete_scope();
                                             } |
-    IF LPAREN expr RPAREN stmt ELSE stmt    { printProductionRule(11); } |
+    IF LPAREN expr RPAREN stmt ELSE stmt    { /* placeholder */ } |
     WHILE LPAREN expr RPAREN stmt           { 
-                                            if ($3->getType() != "bool"){
+                                            if (((NExpression*)$3)->getType() != "bool"){
                                                 errorMismatch(yylineno);
                                                 exit(1);
                                             }
@@ -165,34 +170,36 @@ startScope:
 endScope:
     { scopeManager.delete_scope(); };
 
-call: ID LPAREN expr RPAREN { 
-                            string name = ((NIdentifier*)$1)->get();
-                            string arg_type = ((NExpression*)$3)->get_arg_type();
-                            if (not scopeManager.is_function(name)){
-                                errorUndef(yylineno, name);
+call: 
+    ID LPAREN expr RPAREN { 
+                            string func_name = ((NIdentifier*)$1)->get();
+                            if (not scopeManager.has_function(func_name)){
+                                errorUndef(yylineno, func_name);
                                 exit(1);
                             }
-                            if (not scopeManager.get_func(name).get_arg_type() == arg_type){
-                                errorPrototypeMismatch(yylineno, name, scopeManager.get_func(name).get_arg(), arg_type);
+                            string expr_type = ((NExpression*)$3)->getType();
+                            Function* func = scopeManager.get_function(func_name);
+                            string arg_type = func->get_arg_type();
+                            string ret_type = func->get_ret_type();
+                            delete $1;
+                            if (arg_type != expr_type){
+                                errorPrototypeMismatch(yylineno, func_name, arg_type);
                                 exit(1);
                             }
-                            $$ = new NExpression(scopeManager.get_func(name).get_ret_type());
+                            $$ = new NExpression(ret_type);
                             };
 
 type: 
-    int { 
+    INT { 
     $$ = new Ntype("int"); 
     } | 
-    byte { 
+    BYTE { 
     $$ = new Ntype("byte"); 
     } | 
-    bool { 
+    BOOL { 
     $$ = new Ntype("bool"); 
     };
 
-/* relop: EQ | NEQ | GT | GTE | LT | LTE; */
-
-/* binop: ADD | SUB | MUL | DIV; */
 
 expr:
     LPAREN expr RPAREN      { 
@@ -203,7 +210,7 @@ expr:
                             string rightType = ((NExpression*)$3)->getType();
                             delete $3;
                             delete $1;
-                            if (!numType(leftType) || !numType(rightType)){
+                            if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
@@ -215,7 +222,7 @@ expr:
                             string rightType = ((NExpression*)$3)->getType();
                             delete $3;
                             delete $1;
-                            if (!numType(leftType) || !numType(rightType)){
+                            if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
@@ -227,7 +234,7 @@ expr:
                             string rightType = ((NExpression*)$3)->getType();
                             delete $3;
                             delete $1;
-                            if (!numType(leftType) || !numType(rightType)){
+                            if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
@@ -239,7 +246,7 @@ expr:
                             string rightType = ((NExpression*)$3)->getType();
                             delete $3;
                             delete $1;
-                            if (!numType(leftType) || !numType(rightType)){
+                            if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
@@ -247,20 +254,21 @@ expr:
                             $$ = new NExpression(newType);
                             } |
     ID                      { 
-                            string name = ((IDNode*)$1)->get();
+                            string name = ((NIdentifier*)$1)->get();
+                            string type = scopeManager.get_symbol(name)->get_type();
                             delete $1;
-                            if(!scopeManager.isDeclared(name)  || !scopeManager.isFunction(name)){
-                                errorUndef(yylineno, id);
+                            if(!scopeManager.is_declared(name)){
+                                errorUndef(yylineno, name);
                                 exit(1);
                             }
-                            string type = scopeManager.getType(id);
                             $$ = new NExpression(type);
                             } |
     call                    { 
-                            string name = ((NCall*)$1)->get();
-                            string type = scopeManager.getType(name);
-                            delete $1;
-                            $$ = new NExpression(type);
+                            // string name = ((NCall*)$1)->get();
+                            // string type = scopeManager.getType(name);
+                            // delete $1;
+                            // $$ = new NExpression(type);
+                            $$ = $1;
                             } |
     NUM                     { 
                             delete $1;
@@ -269,17 +277,18 @@ expr:
     NUM B                   { 
                             int val = ((NInteger*)$1)->get();
                             delete $1;
+                            string val_str = to_string(val);
                             if (val > 255){
-                                errorByteTooLarge(yylineno, val);
+                                errorByteTooLarge(yylineno, val_str);
                                 exit(1);
                             }
                             $$ = new NExpression("byte");
                             } |
     STRING                  { $$ = new NExpression("string"); } |
     TRUE                    { $$ = new NExpression("bool"); } |
-    FALSE                   { $$ = new NExpression("bool") } |
+    FALSE                   { $$ = new NExpression("bool"); } |
     NOT expr                { 
-                            if ($2->getType() != "bool"){
+                            if (((NExpression*)$2)->getType() != "bool"){
                                 errorMismatch(yylineno);
                                 delete $2;
                                 exit(1);
@@ -398,5 +407,7 @@ void yyerror(const char* msg) {
 }
 
 int main() {
-    return yyparse();
+    initialize_scope_manager();
+    yyparse();
+    scopeManager.delete_scope();
 }

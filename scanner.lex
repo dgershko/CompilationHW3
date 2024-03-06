@@ -1,5 +1,7 @@
 %{
 // #include"tokens.hpp"
+#include "node.hpp"
+#define YYSTYPE Node*
 #include "parser.tab.hpp"
 #include "hw3_output.hpp"
 %}
@@ -47,8 +49,14 @@ continue                   return CONTINUE;
 "-"                             return SUB;
 "*"                             return MUL;
 "/"                             return DIV;
-{num}                           return NUM;
-{id}                             return ID;
+{num}                           {
+                                    yylval = new NInteger(yytext);
+                                    return NUM;
+                                }
+{id}                            {
+                                    yylval = new NIdentifier(yytext);
+                                    return ID;
+                                }
 {string}                     return STRING;
 .  { output::errorLex(yylineno); exit(0);};
 

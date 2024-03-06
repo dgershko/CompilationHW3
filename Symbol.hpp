@@ -15,6 +15,7 @@ public:
 
     const std::string& get_name() { return this->name; }
     const std::string& get_type() { return this->type; }
+    const int get_offset() { return this->offset; }
 };
 
 class Function {

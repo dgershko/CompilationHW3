@@ -4,12 +4,13 @@
 #include <string>
 #include <map>
 #include <stack>
+#include <deque>
 #include "Symbol.hpp"
 
 class Scope;
 
 class ScopeManager {
-    std::stack<Scope*> scopes;
+    std::deque<Scope*> scopes;
     std::map<std::string, Function*> functions;
     std::stack<int> offsets;
     int num_scopes;
@@ -37,6 +38,8 @@ public:
     bool insert_symbol(const std::string& name, const std::string& type, int offset);
     bool insert_function(const std::string& name, const std::string& type, int offset, const std::string& arg_type);
     Symbol* get_symbol(const std::string& name);
+    // function to call printID(id, offset, type) for each declared symbol, in order
+    void print_symbols();
 };
 
 #endif
