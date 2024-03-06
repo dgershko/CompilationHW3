@@ -10,7 +10,7 @@ protected:
     std::string type;
     int offset;
 public:
-    Symbol(const std::string& name, const std::string& type, int offset) : name(name), type(type) { }
+    Symbol(const std::string& name, const std::string& type, int offset) : name(name), type(type), offset(offset) { }
     virtual ~Symbol() = default;
 
     const std::string& get_name() { return this->name; }

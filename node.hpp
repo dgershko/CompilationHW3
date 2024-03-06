@@ -15,33 +15,7 @@ class NIdentifier;
 class NifElse;
 class NCall;
 
-// #define YYSTYPE Node *
 
-
-// typedef enum binop
-// {
-//     ADD,
-//     SUB,
-//     MUL,
-//     DIV
-// } BinOp;
-// typedef enum relop
-// {
-//     EQ,
-//     NEQ,
-//     GT,
-//     GTE,
-//     LT,
-//     LTE
-// } RelOp;
-// typedef enum numtype
-// {
-//     INT,
-//     BYTE,
-//     BOOL
-// } NumType;
-
-// typedef NIdentifier callNode;
 class Node
 {
 public:

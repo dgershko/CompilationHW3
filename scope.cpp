@@ -58,8 +58,9 @@ bool ScopeManager::insert_symbol(const std::string& name, const std::string& typ
     if (scopes.empty()) {
         return false;
     }
+    bool res = scopes.back()->insert_symbol(name, type, offsets.top());
     offsets.top() += 1;
-    return scopes.back()->insert_symbol(name, type, offsets.top());
+    return res;
 }
 
 bool ScopeManager::insert_function(const std::string& name, const std::string& ret_type, const std::string& arg_type) {
