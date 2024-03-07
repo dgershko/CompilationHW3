@@ -72,41 +72,46 @@
     #include <iostream>
     #include "hw3_output.hpp"
     #include "scope.hpp"
-    #include "node.cpp"
+    #include "node.hpp"
     #include "Symbol.hpp"
-    // #define YYSTYPE Node*
+    #define YYSTYPE Node *
     using namespace std;
     using namespace output;
-    ScopeManager scopeManager;
     extern int yylineno;
     extern char* yytext;
     extern size_t yyleng;
     extern int yylex();
     void yyerror(const char* msg);
-    scopeManager.insert_function("print", "void", "string");
-    scopeManager.insert_function("printi", "void", "int");
-    scopeManager.insert_function("readi", "int", "int");
+    ScopeManager scopeManager;
+    void initialize_scope_manager() {
+        scopeManager.insert_function("print", "VOID", "STRING");
+        scopeManager.insert_function("printi", "VOID", "INT");
+        scopeManager.insert_function("readi", "INT", "INT");
+        scopeManager.add_scope();
+    }
     int loop_counter = 0;
     bool is_numeric(string type){
-        return type == "int" || type == "byte";
+        // cout << "in is_numeric, type: " << type << endl;
+        return type == "INT" || type == "BYTE";
     }
     bool can_implicit_cast(string from, string to){
-        return (from == "byte" && to == "int");
+        return (from == "BYTE" && to == "INT");
     }
     string dominant(string left, string right) { 
-        if (left == "bool" && right == "bool") {
-            return "bool";
+        // std::cout << "in dominant, left: " << left << ", right: " << right << std::endl;
+        if (left == "BOOL" && right == "BOOL") {
+            return "BOOL";
         }
-        if (left == "int" || right == "int") {
-            return "int";
+        if (left == "INT" || right == "INT") {
+            return "INT";
         }
         else {
-            return "byte";
+            return "BYTE";
         }
     }
 
 
-#line 110 "parser.tab.cpp"
+#line 115 "parser.tab.cpp"
 
 # ifndef YY_CAST
 #  ifdef __cplusplus
@@ -137,10 +142,10 @@ enum yysymbol_kind_t
   YYSYMBOL_YYEOF = 0,                      /* "end of file"  */
   YYSYMBOL_YYerror = 1,                    /* error  */
   YYSYMBOL_YYUNDEF = 2,                    /* "invalid token"  */
-  YYSYMBOL_int = 3,                        /* int  */
-  YYSYMBOL_byte = 4,                       /* byte  */
+  YYSYMBOL_INT = 3,                        /* INT  */
+  YYSYMBOL_BYTE = 4,                       /* BYTE  */
   YYSYMBOL_B = 5,                          /* B  */
-  YYSYMBOL_bool = 6,                       /* bool  */
+  YYSYMBOL_BOOL = 6,                       /* BOOL  */
   YYSYMBOL_TRUE = 7,                       /* TRUE  */
   YYSYMBOL_FALSE = 8,                      /* FALSE  */
   YYSYMBOL_RETURN = 9,                     /* RETURN  */
@@ -569,11 +574,11 @@ static const yytype_int8 yytranslate[] =
 /* YYRLINE[YYN] -- Source line where rule number YYN was defined.  */
 static const yytype_int16 yyrline[] =
 {
-       0,    73,    73,    75,    75,    78,    79,    89,   106,   122,
-     123,   126,   135,   136,   147,   154,   163,   166,   168,   183,
-     186,   189,   198,   201,   213,   225,   237,   249,   259,   265,
-     269,   278,   279,   280,   281,   289,   300,   311,   322,   333,
-     344,   355,   366,   377
+       0,    78,    78,    80,    80,    83,    84,    94,   111,   127,
+     128,   131,   140,   141,   152,   159,   168,   171,   174,   193,
+     196,   199,   205,   208,   220,   232,   244,   256,   266,   273,
+     277,   287,   288,   289,   290,   298,   309,   320,   331,   342,
+     353,   364,   375,   386
 };
 #endif
 
@@ -589,8 +594,8 @@ static const char *yysymbol_name (yysymbol_kind_t yysymbol) YY_ATTRIBUTE_UNUSED;
    First, the terminals, then, starting at YYNTOKENS, nonterminals.  */
 static const char *const yytname[] =
 {
-  "\"end of file\"", "error", "\"invalid token\"", "int", "byte", "B",
-  "bool", "TRUE", "FALSE", "RETURN", "BREAK", "CONTINUE", "WHILE", "SC",
+  "\"end of file\"", "error", "\"invalid token\"", "INT", "BYTE", "B",
+  "BOOL", "TRUE", "FALSE", "RETURN", "BREAK", "CONTINUE", "WHILE", "SC",
   "STRING", "ID", "NUM", "LBRACE", "RBRACE", "ASSIGN", "OR", "AND", "EQ",
   "NEQ", "GT", "GTE", "LT", "LTE", "ADD", "SUB", "MUL", "DIV", "NOT",
   "LPAREN", "RPAREN", "IF", "ELSE", "$accept", "prog", "stmts", "stmt",
@@ -1210,47 +1215,47 @@ yyreduce:
   switch (yyn)
     {
   case 2: /* prog: stmts  */
-#line 73 "parser.ypp"
-            { printProductionRule(1); }
-#line 1216 "parser.tab.cpp"
+#line 78 "parser.ypp"
+            { /* placeholder */ }
+#line 1221 "parser.tab.cpp"
     break;
 
   case 3: /* stmts: stmt  */
-#line 75 "parser.ypp"
-            { printProductionRule(2); }
-#line 1222 "parser.tab.cpp"
+#line 80 "parser.ypp"
+            { /* placeholder */ }
+#line 1227 "parser.tab.cpp"
     break;
 
   case 4: /* stmts: stmts stmt  */
-#line 75 "parser.ypp"
-                                                     { printProductionRule(3); }
-#line 1228 "parser.tab.cpp"
+#line 80 "parser.ypp"
+                                               { /* placeholder */ }
+#line 1233 "parser.tab.cpp"
     break;
 
   case 6: /* stmt: type ID SC  */
-#line 79 "parser.ypp"
+#line 84 "parser.ypp"
                                             { 
-                                            string type = ((Ntype*)(yyvsp[-2].type))->get();
-                                            string name = ((NIdentifier*)(yyvsp[-1].id))->get();
-                                            delete (yyvsp[-2].type);
-                                            delete (yyvsp[-1].id);
+                                            string type = ((Ntype*)yyvsp[-2])->get();
+                                            string name = ((NIdentifier*)yyvsp[-1])->get();
+                                            delete yyvsp[-2];
+                                            delete yyvsp[-1];
                                             if (not scopeManager.insert_symbol(name, type)){
                                                 errorDef(yylineno, name);
                                                 exit(1);
                                             }
                                             }
-#line 1243 "parser.tab.cpp"
+#line 1248 "parser.tab.cpp"
     break;
 
   case 7: /* stmt: type ID ASSIGN expr SC  */
-#line 89 "parser.ypp"
+#line 94 "parser.ypp"
                                             { 
-                                            string type = ((Ntype*)(yyvsp[-4].type))->get();
-                                            string name = ((NIdentifier*)(yyvsp[-3].id))->get();
-                                            string expr_type = ((NExpression*)(yyvsp[-1].expr))->getType();
-                                            delete (yyvsp[-4].type);
-                                            delete (yyvsp[-3].id);
-                                            delete (yyvsp[-1].expr);
+                                            string type = ((Ntype*)yyvsp[-4])->get();
+                                            string name = ((NIdentifier*)yyvsp[-3])->get();
+                                            string expr_type = ((NExpression*)yyvsp[-1])->getType();
+                                            delete yyvsp[-4];
+                                            delete yyvsp[-3];
+                                            delete yyvsp[-1];
                                             // add casting
                                             if (type != expr_type && !can_implicit_cast(expr_type, type)){
                                                 errorMismatch(yylineno);
@@ -1261,82 +1266,82 @@ yyreduce:
                                                 exit(1);
                                             }
                                             }
-#line 1265 "parser.tab.cpp"
+#line 1270 "parser.tab.cpp"
     break;
 
   case 8: /* stmt: ID ASSIGN expr SC  */
-#line 106 "parser.ypp"
+#line 111 "parser.ypp"
                                             { 
-                                            string name = ((NIdentifier*)(yyvsp[-3].id))->get();
+                                            string name = ((NIdentifier*)yyvsp[-3])->get();
                                             if (not scopeManager.is_declared(name)){
                                                 errorUndef(yylineno, name);
                                                 exit(1);
                                             }
-                                            string type = scopeManager.get_type(name);
-                                            string val_type = ((NExpression*)(yyvsp[-1].expr))->getType();
-                                            delete (yyvsp[-3].id);
-                                            delete (yyvsp[-1].expr);
+                                            string type = scopeManager.get_symbol(name)->get_type();
+                                            string val_type = ((NExpression*)yyvsp[-1])->getType();
+                                            delete yyvsp[-3];
+                                            delete yyvsp[-1];
                                             // add casting
                                             if (type != val_type){
                                                 errorMismatch(yylineno);
                                                 exit(1);
                                             }
                                             }
-#line 1286 "parser.tab.cpp"
+#line 1291 "parser.tab.cpp"
     break;
 
   case 9: /* stmt: call SC  */
-#line 122 "parser.ypp"
-                                            { (yyval.stmt) = (yyvsp[-1].expr); }
-#line 1292 "parser.tab.cpp"
+#line 127 "parser.ypp"
+                                            { yyval = yyvsp[-1]; }
+#line 1297 "parser.tab.cpp"
     break;
 
   case 10: /* stmt: RETURN SC  */
-#line 123 "parser.ypp"
+#line 128 "parser.ypp"
                                             { 
                                             // does nothing?
                                             }
-#line 1300 "parser.tab.cpp"
+#line 1305 "parser.tab.cpp"
     break;
 
   case 11: /* stmt: IF LPAREN expr RPAREN stmt  */
-#line 126 "parser.ypp"
+#line 131 "parser.ypp"
                                             { 
-                                            if ((yyvsp[-2].expr)->getType() != "bool"){
+                                            if (((NExpression*)yyvsp[-2])->getType() != "BOOL"){
                                                 errorMismatch(yylineno);
                                                 exit(1);
                                             }
                                             scopeManager.add_scope();
-                                            (yyval.stmt) = (yyvsp[0].stmt);
+                                            yyval = yyvsp[0];
                                             scopeManager.delete_scope();
                                             }
-#line 1314 "parser.tab.cpp"
+#line 1319 "parser.tab.cpp"
     break;
 
   case 12: /* stmt: IF LPAREN expr RPAREN stmt ELSE stmt  */
-#line 135 "parser.ypp"
-                                            { printProductionRule(11); }
-#line 1320 "parser.tab.cpp"
+#line 140 "parser.ypp"
+                                            { /* placeholder */ }
+#line 1325 "parser.tab.cpp"
     break;
 
   case 13: /* stmt: WHILE LPAREN expr RPAREN stmt  */
-#line 136 "parser.ypp"
+#line 141 "parser.ypp"
                                             { 
-                                            if ((yyvsp[-2].expr)->getType() != "bool"){
+                                            if (((NExpression*)yyvsp[-2])->getType() != "BOOL"){
                                                 errorMismatch(yylineno);
                                                 exit(1);
                                             }
                                             loop_counter++;
                                             scopeManager.add_scope();
-                                            (yyval.stmt) = (yyvsp[0].stmt);
+                                            yyval = yyvsp[0];
                                             scopeManager.delete_scope();
                                             loop_counter--;
                                             }
-#line 1336 "parser.tab.cpp"
+#line 1341 "parser.tab.cpp"
     break;
 
   case 14: /* stmt: BREAK SC  */
-#line 147 "parser.ypp"
+#line 152 "parser.ypp"
                                             { 
                                             if (loop_counter == 0){
                                                 errorUnexpectedBreak(yylineno);
@@ -1344,11 +1349,11 @@ yyreduce:
                                             }
                                             // loop_counter--;
                                             }
-#line 1348 "parser.tab.cpp"
+#line 1353 "parser.tab.cpp"
     break;
 
   case 15: /* stmt: CONTINUE SC  */
-#line 154 "parser.ypp"
+#line 159 "parser.ypp"
                                             { 
                                             if (loop_counter == 0){
                                                 errorUnexpectedContinue(yylineno);
@@ -1356,369 +1361,375 @@ yyreduce:
                                             }
                                             // loop_counter--;
                                             }
-#line 1360 "parser.tab.cpp"
+#line 1365 "parser.tab.cpp"
     break;
 
   case 16: /* startScope: %empty  */
-#line 163 "parser.ypp"
+#line 168 "parser.ypp"
     { scopeManager.add_scope(); }
-#line 1366 "parser.tab.cpp"
+#line 1371 "parser.tab.cpp"
     break;
 
   case 17: /* endScope: %empty  */
-#line 166 "parser.ypp"
+#line 171 "parser.ypp"
     { scopeManager.delete_scope(); }
-#line 1372 "parser.tab.cpp"
+#line 1377 "parser.tab.cpp"
     break;
 
   case 18: /* call: ID LPAREN expr RPAREN  */
-#line 168 "parser.ypp"
-                            { 
-                            string name = ((NIdentifier*)(yyvsp[-3].id))->get();
-                            string arg_type = ((NExpression*)(yyvsp[-1].expr))->get_arg_type();
-                            if (not scopeManager.is_function(name)){
-                                errorUndef(yylineno, name);
+#line 174 "parser.ypp"
+                          { 
+                            string func_name = ((NIdentifier*)yyvsp[-3])->get();
+                            if (not scopeManager.has_function(func_name)){
+                                errorUndef(yylineno, func_name);
                                 exit(1);
                             }
-                            if (not scopeManager.get_func(name).get_arg_type() == arg_type){
-                                errorPrototypeMismatch(yylineno, name, scopeManager.get_func(name).get_arg(), arg_type);
+                            string expr_type = ((NExpression*)yyvsp[-1])->getType();
+                            Function* func = scopeManager.get_function(func_name);
+                            string arg_type = func->get_arg_type();
+                            string ret_type = func->get_ret_type();
+                            delete yyvsp[-3];
+                            if (arg_type != expr_type){
+                                errorPrototypeMismatch(yylineno, func_name, arg_type);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression(scopeManager.get_func(name).get_ret_type());
+                            yyval = new NExpression(ret_type);
                             }
-#line 1390 "parser.tab.cpp"
+#line 1399 "parser.tab.cpp"
     break;
 
-  case 19: /* type: int  */
-#line 183 "parser.ypp"
+  case 19: /* type: INT  */
+#line 193 "parser.ypp"
         { 
-    (yyval.type) = new Ntype("int"); 
+    yyval = new Ntype("INT"); 
     }
-#line 1398 "parser.tab.cpp"
+#line 1407 "parser.tab.cpp"
     break;
 
-  case 20: /* type: byte  */
-#line 186 "parser.ypp"
+  case 20: /* type: BYTE  */
+#line 196 "parser.ypp"
          { 
-    (yyval.type) = new Ntype("byte"); 
+    yyval = new Ntype("BYTE"); 
     }
-#line 1406 "parser.tab.cpp"
+#line 1415 "parser.tab.cpp"
     break;
 
-  case 21: /* type: bool  */
-#line 189 "parser.ypp"
+  case 21: /* type: BOOL  */
+#line 199 "parser.ypp"
          { 
-    (yyval.type) = new Ntype("bool"); 
+    yyval = new Ntype("BOOL"); 
     }
-#line 1414 "parser.tab.cpp"
+#line 1423 "parser.tab.cpp"
     break;
 
   case 22: /* expr: LPAREN expr RPAREN  */
-#line 198 "parser.ypp"
+#line 205 "parser.ypp"
                             { 
-                            (yyval.expr) = (yyvsp[-1].expr);
+                            yyval = yyvsp[-1];
                             }
-#line 1422 "parser.tab.cpp"
+#line 1431 "parser.tab.cpp"
     break;
 
   case 23: /* expr: expr ADD expr  */
-#line 201 "parser.ypp"
+#line 208 "parser.ypp"
                             {
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
-                            if (!numType(leftType) || !numType(rightType)){
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
+                            if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
                             string newType = dominant(rightType, leftType);
-                            (yyval.expr) = new NExpression(newType);
+                            yyval = new NExpression(newType);
                             }
-#line 1439 "parser.tab.cpp"
+#line 1448 "parser.tab.cpp"
     break;
 
   case 24: /* expr: expr SUB expr  */
-#line 213 "parser.ypp"
+#line 220 "parser.ypp"
                             { 
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
-                            if (!numType(leftType) || !numType(rightType)){
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
+                            if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
                             string newType = dominant(rightType, leftType);
-                            (yyval.expr) = new NExpression(newType);
+                            yyval = new NExpression(newType);
                             }
-#line 1456 "parser.tab.cpp"
+#line 1465 "parser.tab.cpp"
     break;
 
   case 25: /* expr: expr MUL expr  */
-#line 225 "parser.ypp"
+#line 232 "parser.ypp"
                             { 
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
-                            if (!numType(leftType) || !numType(rightType)){
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
+                            if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
                             string newType = dominant(rightType, leftType);
-                            (yyval.expr) = new NExpression(newType);
+                            yyval = new NExpression(newType);
                             }
-#line 1473 "parser.tab.cpp"
+#line 1482 "parser.tab.cpp"
     break;
 
   case 26: /* expr: expr DIV expr  */
-#line 237 "parser.ypp"
+#line 244 "parser.ypp"
                             { 
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
-                            if (!numType(leftType) || !numType(rightType)){
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
+                            if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
                             string newType = dominant(rightType, leftType);
-                            (yyval.expr) = new NExpression(newType);
+                            yyval = new NExpression(newType);
                             }
-#line 1490 "parser.tab.cpp"
+#line 1499 "parser.tab.cpp"
     break;
 
   case 27: /* expr: ID  */
-#line 249 "parser.ypp"
+#line 256 "parser.ypp"
                             { 
-                            string name = ((IDNode*)(yyvsp[0].id))->get();
-                            delete (yyvsp[0].id);
-                            if(!scopeManager.isDeclared(name)  || !scopeManager.isFunction(name)){
-                                errorUndef(yylineno, id);
+                            string name = ((NIdentifier*)yyvsp[0])->get();
+                            string type = scopeManager.get_symbol(name)->get_type();
+                            delete yyvsp[0];
+                            if(!scopeManager.is_declared(name)){
+                                errorUndef(yylineno, name);
                                 exit(1);
                             }
-                            string type = scopeManager.getType(id);
-                            (yyval.expr) = new NExpression(type);
+                            yyval = new NExpression(type);
                             }
-#line 1505 "parser.tab.cpp"
+#line 1514 "parser.tab.cpp"
     break;
 
   case 28: /* expr: call  */
-#line 259 "parser.ypp"
+#line 266 "parser.ypp"
                             { 
-                            string name = ((NCall*)(yyvsp[0].expr))->get();
-                            string type = scopeManager.getType(name);
-                            delete (yyvsp[0].expr);
-                            (yyval.expr) = new NExpression(type);
+                            // string name = ((NCall*)$1)->get();
+                            // string type = scopeManager.getType(name);
+                            // delete $1;
+                            // $$ = new NExpression(type);
+                            yyval = yyvsp[0];
                             }
-#line 1516 "parser.tab.cpp"
+#line 1526 "parser.tab.cpp"
     break;
 
   case 29: /* expr: NUM  */
-#line 265 "parser.ypp"
+#line 273 "parser.ypp"
                             { 
-                            delete (yyvsp[0].integer);
-                            (yyval.expr) = new NExpression("int");
+                            delete yyvsp[0];
+                            yyval = new NExpression("INT");
                             }
-#line 1525 "parser.tab.cpp"
+#line 1535 "parser.tab.cpp"
     break;
 
   case 30: /* expr: NUM B  */
-#line 269 "parser.ypp"
+#line 277 "parser.ypp"
                             { 
-                            int val = ((NInteger*)(yyvsp[-1].integer))->get();
-                            delete (yyvsp[-1].integer);
+                            int val = ((NInteger*)yyvsp[-1])->get();
+                            delete yyvsp[-1];
+                            string val_str = to_string(val);
                             if (val > 255){
-                                errorByteTooLarge(yylineno, val);
+                                errorByteTooLarge(yylineno, val_str);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression("byte");
+                            yyval = new NExpression("BYTE");
                             }
-#line 1539 "parser.tab.cpp"
+#line 1550 "parser.tab.cpp"
     break;
 
   case 31: /* expr: STRING  */
-#line 278 "parser.ypp"
-                            { (yyval.expr) = new NExpression("string"); }
-#line 1545 "parser.tab.cpp"
+#line 287 "parser.ypp"
+                            { yyval = new NExpression("STRING"); }
+#line 1556 "parser.tab.cpp"
     break;
 
   case 32: /* expr: TRUE  */
-#line 279 "parser.ypp"
-                            { (yyval.expr) = new NExpression("bool"); }
-#line 1551 "parser.tab.cpp"
+#line 288 "parser.ypp"
+                            { yyval = new NExpression("BOOL"); }
+#line 1562 "parser.tab.cpp"
     break;
 
   case 33: /* expr: FALSE  */
-#line 280 "parser.ypp"
-                            { (yyval.expr) = new NExpression("bool") }
-#line 1557 "parser.tab.cpp"
+#line 289 "parser.ypp"
+                            { yyval = new NExpression("BOOL"); }
+#line 1568 "parser.tab.cpp"
     break;
 
   case 34: /* expr: NOT expr  */
-#line 281 "parser.ypp"
+#line 290 "parser.ypp"
                             { 
-                            if ((yyvsp[0].expr)->getType() != "bool"){
+                            if (((NExpression*)yyvsp[0])->getType() != "BOOL"){
                                 errorMismatch(yylineno);
-                                delete (yyvsp[0].expr);
+                                delete yyvsp[0];
                                 exit(1);
                             }
-                            (yyval.expr) = (yyvsp[0].expr);
+                            yyval = yyvsp[0];
                             }
-#line 1570 "parser.tab.cpp"
+#line 1581 "parser.tab.cpp"
     break;
 
   case 35: /* expr: expr AND expr  */
-#line 289 "parser.ypp"
+#line 298 "parser.ypp"
                             { 
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
-                            if (leftType != "bool" || rightType != "bool"){
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
+                            if (leftType != "BOOL" || rightType != "BOOL"){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression("bool");
+                            yyval = new NExpression("BOOL");
                             }
-#line 1586 "parser.tab.cpp"
+#line 1597 "parser.tab.cpp"
     break;
 
   case 36: /* expr: expr OR expr  */
-#line 300 "parser.ypp"
+#line 309 "parser.ypp"
                             { 
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
-                            if (leftType != "bool" || rightType != "bool"){
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
+                            if (leftType != "BOOL" || rightType != "BOOL"){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression("bool");
+                            yyval = new NExpression("BOOL");
                             }
-#line 1602 "parser.tab.cpp"
+#line 1613 "parser.tab.cpp"
     break;
 
   case 37: /* expr: expr EQ expr  */
-#line 311 "parser.ypp"
+#line 320 "parser.ypp"
                             {                             
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
                             if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression("bool"); 
+                            yyval = new NExpression("BOOL"); 
                             }
-#line 1618 "parser.tab.cpp"
+#line 1629 "parser.tab.cpp"
     break;
 
   case 38: /* expr: expr NEQ expr  */
-#line 322 "parser.ypp"
+#line 331 "parser.ypp"
                             {                             
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
                             if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression("bool"); 
+                            yyval = new NExpression("BOOL"); 
                             }
-#line 1634 "parser.tab.cpp"
+#line 1645 "parser.tab.cpp"
     break;
 
   case 39: /* expr: expr GT expr  */
-#line 333 "parser.ypp"
+#line 342 "parser.ypp"
                             {                             
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
                             if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression("bool"); 
+                            yyval = new NExpression("BOOL"); 
                             }
-#line 1650 "parser.tab.cpp"
+#line 1661 "parser.tab.cpp"
     break;
 
   case 40: /* expr: expr GTE expr  */
-#line 344 "parser.ypp"
+#line 353 "parser.ypp"
                             {                             
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
                             if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression("bool"); 
+                            yyval = new NExpression("BOOL"); 
                             }
-#line 1666 "parser.tab.cpp"
+#line 1677 "parser.tab.cpp"
     break;
 
   case 41: /* expr: expr LT expr  */
-#line 355 "parser.ypp"
+#line 364 "parser.ypp"
                             {                             
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
                             if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression("bool"); 
+                            yyval = new NExpression("BOOL"); 
                             }
-#line 1682 "parser.tab.cpp"
+#line 1693 "parser.tab.cpp"
     break;
 
   case 42: /* expr: expr LTE expr  */
-#line 366 "parser.ypp"
+#line 375 "parser.ypp"
                             {                             
-                            string leftType = ((NExpression*)(yyvsp[-2].expr))->getType();
-                            string rightType = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            delete (yyvsp[-2].expr);
+                            string leftType = ((NExpression*)yyvsp[-2])->getType();
+                            string rightType = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            delete yyvsp[-2];
                             if (!is_numeric(leftType) || !is_numeric(rightType)){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression("bool"); 
+                            yyval = new NExpression("BOOL"); 
                             }
-#line 1698 "parser.tab.cpp"
+#line 1709 "parser.tab.cpp"
     break;
 
   case 43: /* expr: LPAREN type RPAREN expr  */
-#line 377 "parser.ypp"
+#line 386 "parser.ypp"
                             { 
-                            string type = ((Ntype*)(yyvsp[-2].type))->get();
-                            delete (yyvsp[-2].type);
-                            string expr_type = ((NExpression*)(yyvsp[0].expr))->getType();
-                            delete (yyvsp[0].expr);
-                            if (type != "int" && type != "byte"){
+                            string type = ((Ntype*)yyvsp[-2])->get();
+                            delete yyvsp[-2];
+                            string expr_type = ((NExpression*)yyvsp[0])->getType();
+                            delete yyvsp[0];
+                            if (type != "INT" && type != "BYTE"){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            if (expr_type != "int" && expr_type != "byte"){
+                            if (expr_type != "INT" && expr_type != "BYTE"){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            (yyval.expr) = new NExpression(type);
+                            yyval = new NExpression(type);
                             }
-#line 1718 "parser.tab.cpp"
+#line 1729 "parser.tab.cpp"
     break;
 
 
-#line 1722 "parser.tab.cpp"
+#line 1733 "parser.tab.cpp"
 
       default: break;
     }
@@ -1911,7 +1922,7 @@ yyreturnlab:
   return yyresult;
 }
 
-#line 393 "parser.ypp"
+#line 402 "parser.ypp"
 
 
 void yyerror(const char* msg) {
@@ -1920,5 +1931,7 @@ void yyerror(const char* msg) {
 }
 
 int main() {
-    return yyparse();
+    initialize_scope_manager();
+    yyparse();
+    scopeManager.delete_scope();
 }

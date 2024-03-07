@@ -54,10 +54,10 @@ extern int yydebug;
     YYEOF = 0,                     /* "end of file"  */
     YYerror = 256,                 /* error  */
     YYUNDEF = 257,                 /* "invalid token"  */
-    int = 258,                     /* int  */
-    byte = 259,                    /* byte  */
+    INT = 258,                     /* INT  */
+    BYTE = 259,                    /* BYTE  */
     B = 260,                       /* B  */
-    bool = 261,                    /* bool  */
+    BOOL = 261,                    /* BOOL  */
     TRUE = 262,                    /* TRUE  */
     FALSE = 263,                   /* FALSE  */
     RETURN = 264,                  /* RETURN  */
@@ -94,25 +94,7 @@ extern int yydebug;
 
 /* Value type.  */
 #if ! defined YYSTYPE && ! defined YYSTYPE_IS_DECLARED
-#line 39 "parser.ypp"
-union yystype
-{
-#line 39 "parser.ypp"
-
-    int num;
-    char* str;
-    NType* type;
-    NIdentifier* id;
-    NExpression* expr;
-    NInteger* integer;
-    NCall* call;
-    NStatement* stmt;
-
-#line 112 "parser.tab.hpp"
-
-};
-#line 39 "parser.ypp"
-typedef union yystype YYSTYPE;
+typedef int YYSTYPE;
 # define YYSTYPE_IS_TRIVIAL 1
 # define YYSTYPE_IS_DECLARED 1
 #endif

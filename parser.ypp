@@ -14,29 +14,29 @@
     void yyerror(const char* msg);
     ScopeManager scopeManager;
     void initialize_scope_manager() {
-        scopeManager.insert_function("print", "void", "string");
-        scopeManager.insert_function("printi", "void", "int");
-        scopeManager.insert_function("readi", "int", "int");
+        scopeManager.insert_function("print", "VOID", "STRING");
+        scopeManager.insert_function("printi", "VOID", "INT");
+        scopeManager.insert_function("readi", "INT", "INT");
         scopeManager.add_scope();
     }
     int loop_counter = 0;
     bool is_numeric(string type){
         // cout << "in is_numeric, type: " << type << endl;
-        return type == "int" || type == "byte";
+        return type == "INT" || type == "BYTE";
     }
     bool can_implicit_cast(string from, string to){
-        return (from == "byte" && to == "int");
+        return (from == "BYTE" && to == "INT");
     }
     string dominant(string left, string right) { 
         // std::cout << "in dominant, left: " << left << ", right: " << right << std::endl;
-        if (left == "bool" && right == "bool") {
-            return "bool";
+        if (left == "BOOL" && right == "BOOL") {
+            return "BOOL";
         }
-        if (left == "int" || right == "int") {
-            return "int";
+        if (left == "INT" || right == "INT") {
+            return "INT";
         }
         else {
-            return "byte";
+            return "BYTE";
         }
     }
 
@@ -129,7 +129,7 @@ stmt:
                                             // does nothing?
                                             } |
     IF LPAREN expr RPAREN stmt              { 
-                                            if (((NExpression*)$3)->getType() != "bool"){
+                                            if (((NExpression*)$3)->getType() != "BOOL"){
                                                 errorMismatch(yylineno);
                                                 exit(1);
                                             }
@@ -139,7 +139,7 @@ stmt:
                                             } |
     IF LPAREN expr RPAREN stmt ELSE stmt    { /* placeholder */ } |
     WHILE LPAREN expr RPAREN stmt           { 
-                                            if (((NExpression*)$3)->getType() != "bool"){
+                                            if (((NExpression*)$3)->getType() != "BOOL"){
                                                 errorMismatch(yylineno);
                                                 exit(1);
                                             }
@@ -191,13 +191,13 @@ call:
 
 type: 
     INT { 
-    $$ = new Ntype("int"); 
+    $$ = new Ntype("INT"); 
     } | 
     BYTE { 
-    $$ = new Ntype("byte"); 
+    $$ = new Ntype("BYTE"); 
     } | 
     BOOL { 
-    $$ = new Ntype("bool"); 
+    $$ = new Ntype("BOOL"); 
     };
 
 
@@ -272,7 +272,7 @@ expr:
                             } |
     NUM                     { 
                             delete $1;
-                            $$ = new NExpression("int");
+                            $$ = new NExpression("INT");
                             } |
     NUM B                   { 
                             int val = ((NInteger*)$1)->get();
@@ -282,13 +282,13 @@ expr:
                                 errorByteTooLarge(yylineno, val_str);
                                 exit(1);
                             }
-                            $$ = new NExpression("byte");
+                            $$ = new NExpression("BYTE");
                             } |
-    STRING                  { $$ = new NExpression("string"); } |
-    TRUE                    { $$ = new NExpression("bool"); } |
-    FALSE                   { $$ = new NExpression("bool"); } |
+    STRING                  { $$ = new NExpression("STRING"); } |
+    TRUE                    { $$ = new NExpression("BOOL"); } |
+    FALSE                   { $$ = new NExpression("BOOL"); } |
     NOT expr                { 
-                            if (((NExpression*)$2)->getType() != "bool"){
+                            if (((NExpression*)$2)->getType() != "BOOL"){
                                 errorMismatch(yylineno);
                                 delete $2;
                                 exit(1);
@@ -300,22 +300,22 @@ expr:
                             string rightType = ((NExpression*)$3)->getType();
                             delete $3;
                             delete $1;
-                            if (leftType != "bool" || rightType != "bool"){
+                            if (leftType != "BOOL" || rightType != "BOOL"){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            $$ = new NExpression("bool");
+                            $$ = new NExpression("BOOL");
                             } |
     expr OR expr            { 
                             string leftType = ((NExpression*)$1)->getType();
                             string rightType = ((NExpression*)$3)->getType();
                             delete $3;
                             delete $1;
-                            if (leftType != "bool" || rightType != "bool"){
+                            if (leftType != "BOOL" || rightType != "BOOL"){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            $$ = new NExpression("bool");
+                            $$ = new NExpression("BOOL");
                             } |
     expr EQ expr            {                             
                             string leftType = ((NExpression*)$1)->getType();
@@ -326,7 +326,7 @@ expr:
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            $$ = new NExpression("bool"); 
+                            $$ = new NExpression("BOOL"); 
                             } |
     expr NEQ expr           {                             
                             string leftType = ((NExpression*)$1)->getType();
@@ -337,7 +337,7 @@ expr:
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            $$ = new NExpression("bool"); 
+                            $$ = new NExpression("BOOL"); 
                             } |
     expr GT expr            {                             
                             string leftType = ((NExpression*)$1)->getType();
@@ -348,7 +348,7 @@ expr:
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            $$ = new NExpression("bool"); 
+                            $$ = new NExpression("BOOL"); 
                             } |
     expr GTE expr           {                             
                             string leftType = ((NExpression*)$1)->getType();
@@ -359,7 +359,7 @@ expr:
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            $$ = new NExpression("bool"); 
+                            $$ = new NExpression("BOOL"); 
                             } |
     expr LT expr            {                             
                             string leftType = ((NExpression*)$1)->getType();
@@ -370,7 +370,7 @@ expr:
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            $$ = new NExpression("bool"); 
+                            $$ = new NExpression("BOOL"); 
                             } |
     expr LTE expr           {                             
                             string leftType = ((NExpression*)$1)->getType();
@@ -381,18 +381,18 @@ expr:
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            $$ = new NExpression("bool"); 
+                            $$ = new NExpression("BOOL"); 
                             } |
     LPAREN type RPAREN expr { 
                             string type = ((Ntype*)$2)->get();
                             delete $2;
                             string expr_type = ((NExpression*)$4)->getType();
                             delete $4;
-                            if (type != "int" && type != "byte"){
+                            if (type != "INT" && type != "BYTE"){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
-                            if (expr_type != "int" && expr_type != "byte"){
+                            if (expr_type != "INT" && expr_type != "BYTE"){
                                 errorMismatch(yylineno);
                                 exit(1);
                             }
