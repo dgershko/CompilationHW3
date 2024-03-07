@@ -3,8 +3,6 @@
 #include <iostream>
 
 ScopeManager::ScopeManager() : num_scopes(0) {
-    scopes.push_back(new Scope());
-    num_scopes++;
     offsets = std::stack<int>();
     offsets.push(0);
 }
@@ -18,6 +16,7 @@ ScopeManager::~ScopeManager() {
 
 void ScopeManager::add_scope() {
     scopes.push_back(new Scope());
+    // std::cout << "adding scope number " << scopes.size() << std::endl;
     num_scopes++;
     offsets.push(offsets.top());
 }
@@ -27,8 +26,17 @@ void ScopeManager::delete_scope() {
     if (scopes.empty()) {
         return;
     }
+    // std::cout << "deleting scope number " << scopes.size() << std::endl;
     Scope* s = scopes.back();
     output::endScope();
+    if (scopes.size() == 1) {
+        // call printID for functions
+        for (auto it = functions.begin(); it != functions.end(); it++) {
+            string func_type = output::makeFunctionType(it->second->get_arg_type(), it->second->get_ret_type());
+            output::printID(it->first, 0, func_type);
+        }
+
+    }
     s->print_symbols();
     delete s;
     scopes.pop_back();

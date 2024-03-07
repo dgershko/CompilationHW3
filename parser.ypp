@@ -64,8 +64,9 @@
 %left MUL DIV
 %right NOT
 %left LPAREN RPAREN
-%nonassoc IF
+%token IF ELSE
 %nonassoc ELSE
+%nonassoc XX
 
 /* %type <type> type
 %type <id> ID
@@ -80,7 +81,7 @@ prog: stmts { /* placeholder */ };
 stmts: stmt { /* placeholder */ } | stmts stmt { /* placeholder */ }; 
 
 stmt:
-    LBRACE startScope stmts RBRACE endScope |
+    LBRACE AS stmts RBRACE DS |
     type ID SC                              { 
                                             string type = ((Ntype*)$1)->get();
                                             string name = ((NIdentifier*)$2)->get();
@@ -119,7 +120,7 @@ stmt:
                                             delete $1;
                                             delete $3;
                                             // add casting
-                                            if (type != val_type){
+                                            if (!(can_implicit_cast(val_type, type) || type == val_type)){
                                                 errorMismatch(yylineno);
                                                 exit(1);
                                             }
@@ -128,7 +129,8 @@ stmt:
     RETURN SC                               { 
                                             // does nothing?
                                             } |
-    IF LPAREN expr RPAREN stmt              { 
+    if_stmt                                 { $$ = $1; } |
+    WHILE LPAREN expr RPAREN EnterLoop stmt ExitLoop{ 
                                             if (((NExpression*)$3)->getType() != "BOOL"){
                                                 errorMismatch(yylineno);
                                                 exit(1);
@@ -136,39 +138,48 @@ stmt:
                                             scopeManager.add_scope();
                                             $$ = $5;
                                             scopeManager.delete_scope();
-                                            } |
-    IF LPAREN expr RPAREN stmt ELSE stmt    { /* placeholder */ } |
-    WHILE LPAREN expr RPAREN stmt           { 
-                                            if (((NExpression*)$3)->getType() != "BOOL"){
-                                                errorMismatch(yylineno);
-                                                exit(1);
-                                            }
-                                            loop_counter++;
-                                            scopeManager.add_scope();
-                                            $$ = $5;
-                                            scopeManager.delete_scope();
-                                            loop_counter--;
                                             } |
     BREAK SC                                { 
                                             if (loop_counter == 0){
                                                 errorUnexpectedBreak(yylineno);
                                                 exit(1);
                                             }
-                                            // loop_counter--;
                                             } |
     CONTINUE SC                             { 
                                             if (loop_counter == 0){
                                                 errorUnexpectedContinue(yylineno);
                                                 exit(1);
                                             }
-                                            // loop_counter--;
+                                           };
+
+if_stmt:
+    IF LPAREN expr RPAREN AS stmt DS ELSE AS stmt DS { 
+                                            if (((NExpression*)$3)->getType() != "BOOL"){
+                                                errorMismatch(yylineno);
+                                                exit(1);
+                                            }
+                                            $$ = $5;
+                                            $$ = $7;
+                                            } |
+    IF LPAREN expr RPAREN AS stmt DS             { 
+                                            if (((NExpression*)$3)->getType() != "BOOL"){
+                                                errorMismatch(yylineno);
+                                                exit(1);
+                                            }
+                                            $$ = $5;
                                             };
 
-startScope:
+AS:
     { scopeManager.add_scope(); };
 
-endScope:
+DS:
     { scopeManager.delete_scope(); };
+
+EnterLoop:
+    { loop_counter++; };
+
+ExitLoop:
+    { loop_counter--; };
 
 call: 
     ID LPAREN expr RPAREN { 
@@ -182,7 +193,7 @@ call:
                             string arg_type = func->get_arg_type();
                             string ret_type = func->get_ret_type();
                             delete $1;
-                            if (arg_type != expr_type){
+                            if (!can_implicit_cast(arg_type, expr_type) && arg_type != expr_type){
                                 errorPrototypeMismatch(yylineno, func_name, arg_type);
                                 exit(1);
                             }
