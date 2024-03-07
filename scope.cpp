@@ -53,17 +53,25 @@ bool ScopeManager::is_declared_in_current_scope(const std::string& symbol_name) 
 
 bool ScopeManager::is_declared(const std::string& symbol_name) {
     // iterate over scopes in the stack
+    // std::cout << "checking if " << symbol_name << " is declared" << std::endl;
     for(int i = 0; i < num_scopes; i++){
         if (scopes[i]->is_declared(symbol_name)) {
+            // std::cout << "found " << symbol_name << " in scope " << i << std::endl;
             return true;
         }
     }
+    // std::cout << "did not find " << symbol_name << std::endl;
     return false;
 }
 
 bool ScopeManager::insert_symbol(const std::string& name, const std::string& type) {
-    // std::cout << "inserting symbol " << name << " of type " << type << std::endl;
     if (scopes.empty()) {
+        return false;
+    }
+    if (is_declared(name)){
+        return false;
+    }
+    if (has_function(name)){
         return false;
     }
     bool res = scopes.back()->insert_symbol(name, type, offsets.top());

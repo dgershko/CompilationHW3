@@ -130,14 +130,12 @@ stmt:
                                             // does nothing?
                                             } |
     if_stmt                                 { $$ = $1; } |
-    WHILE LPAREN expr RPAREN EnterLoop stmt ExitLoop{ 
+    WHILE LPAREN expr RPAREN AS EnterLoop stmt ExitLoop DS{ 
                                             if (((NExpression*)$3)->getType() != "BOOL"){
                                                 errorMismatch(yylineno);
                                                 exit(1);
                                             }
-                                            scopeManager.add_scope();
                                             $$ = $5;
-                                            scopeManager.delete_scope();
                                             } |
     BREAK SC                                { 
                                             if (loop_counter == 0){
@@ -150,22 +148,14 @@ stmt:
                                                 errorUnexpectedContinue(yylineno);
                                                 exit(1);
                                             }
-                                           };
+                                            };
 
 if_stmt:
-    IF LPAREN expr RPAREN AS stmt DS ELSE AS stmt DS { 
-                                            if (((NExpression*)$3)->getType() != "BOOL"){
-                                                errorMismatch(yylineno);
-                                                exit(1);
-                                            }
+    IF LPAREN bool_expr AS stmt DS ELSE AS stmt DS { 
                                             $$ = $5;
                                             $$ = $7;
                                             } |
-    IF LPAREN expr RPAREN AS stmt DS             { 
-                                            if (((NExpression*)$3)->getType() != "BOOL"){
-                                                errorMismatch(yylineno);
-                                                exit(1);
-                                            }
+    IF LPAREN bool_expr AS stmt DS          {
                                             $$ = $5;
                                             };
 
@@ -180,6 +170,15 @@ EnterLoop:
 
 ExitLoop:
     { loop_counter--; };
+    
+bool_expr:
+    expr RPAREN { 
+                        if (((NExpression*)$1)->getType() != "BOOL"){
+                            errorMismatch(yylineno);
+                            exit(1);
+                        }
+                        $$ = $2;
+                        };
 
 call: 
     ID LPAREN expr RPAREN { 
@@ -193,7 +192,7 @@ call:
                             string arg_type = func->get_arg_type();
                             string ret_type = func->get_ret_type();
                             delete $1;
-                            if (!can_implicit_cast(arg_type, expr_type) && arg_type != expr_type){
+                            if (!can_implicit_cast(expr_type, arg_type) && arg_type != expr_type){
                                 errorPrototypeMismatch(yylineno, func_name, arg_type);
                                 exit(1);
                             }
